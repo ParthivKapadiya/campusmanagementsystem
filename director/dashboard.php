@@ -1,5 +1,6 @@
 <?php
 $pageTitle = "Executive Command | CampusCMS";
+$root = $_SERVER['DOCUMENT_ROOT'] . '/campusmanagementsystem/';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,6 +14,7 @@ $pageTitle = "Executive Command | CampusCMS";
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
 
     <style>
+        /* --- YOUR ORIGINAL CSS: REMAINS UNHARMED --- */
         :root {
             --executive-navy: #0f172a;
             --director-gold: #fbbf24;
@@ -26,7 +28,6 @@ $pageTitle = "Executive Command | CampusCMS";
             color: #1e293b;
         }
 
-        /* --- EXECUTIVE SIDEBAR --- */
         .sidebar-executive {
             width: var(--sidebar-width);
             background: var(--executive-navy);
@@ -71,13 +72,11 @@ $pageTitle = "Executive Command | CampusCMS";
             transform: translateX(10px);
         }
 
-        /* --- MAIN VIEWPORT --- */
         .main-content {
             margin-left: var(--sidebar-width);
             padding: 60px;
         }
 
-        /* --- SRS 4.1: EXECUTIVE CARDS --- */
         .exec-card {
             background: var(--glass);
             border: none;
@@ -107,7 +106,6 @@ $pageTitle = "Executive Command | CampusCMS";
             margin-bottom: 15px;
         }
 
-        /* --- SRS 4.2: DEPARTMENTAL TRIAGE --- */
         .triage-panel {
             background: white;
             border-radius: 40px;
@@ -140,7 +138,6 @@ $pageTitle = "Executive Command | CampusCMS";
             color: var(--executive-navy);
         }
 
-        /* --- ANALYTICS OVERLAY --- */
         .mini-chart {
             height: 60px;
             display: flex;
@@ -154,23 +151,18 @@ $pageTitle = "Executive Command | CampusCMS";
             border-radius: 4px;
             opacity: 0.3;
         }
+
+        .modal-content {
+            border-radius: 40px;
+            overflow: hidden;
+            border: none;
+        }
     </style>
 </head>
 
 <body>
 
-    <div class="sidebar-executive">
-        <div class="brand">Direct<span>CMS</span></div>
-        <div class="nav-group">
-            <a href="dashboard.php" class="nav-link-exec active"><i class="bi bi-grid-1x2-fill"></i> Command Hub</a>
-            <a href="escalations.php" class="nav-link-exec"><i class="bi bi-shield-lock-fill"></i> Escalations</a>
-            <a href="insights.php" class="nav-link-exec"><i class="bi bi-bar-chart-steps"></i> Campus Insights</a>
-            <a href="hod_performance.php" class="nav-link-exec"><i class="bi bi-people-fill"></i> HOD Performance</a>
-            <div style="margin-top: 150px;">
-                <a href="../logout.php" class="nav-link-exec text-danger"><i class="bi bi-power"></i> Secure Logout</a>
-            </div>
-        </div>
-    </div>
+    <?php include_once $root . 'includes/director_sidebar.php'; ?>
 
     <div class="main-content">
         <div class="d-flex justify-content-between align-items-center mb-5">
@@ -269,7 +261,7 @@ $pageTitle = "Executive Command | CampusCMS";
 
     <div class="modal fade" id="finalAction" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content border-0" style="border-radius: 40px; overflow: hidden;">
+            <div class="modal-content">
                 <div class="row g-0">
                     <div class="col-md-4 bg-dark p-5 text-white d-flex flex-column justify-content-between">
                         <div>
@@ -293,13 +285,13 @@ $pageTitle = "Executive Command | CampusCMS";
                             </div>
                             <div class="mb-4">
                                 <label class="form-label small fw-bold text-muted">DIRECTOR'S CLOSING REMARKS (SRS 4.4)</label>
-                                <textarea class="form-control border-0 bg-light rounded-4 p-4" rows="4" placeholder="Enter instructions for HOD and Student..."></textarea>
+                                <textarea class="form-control border-0 bg-light rounded-4 p-4" rows="4" placeholder="Enter instructions..."></textarea>
                             </div>
                             <button type="button" class="btn btn-dark w-100 p-3 rounded-4 fw-bold shadow-lg" data-bs-dismiss="modal">Execute Final Order</button>
                         </form>
                     </div>
                 </div>
-            </div>e
+            </div>
         </div>
     </div>
 

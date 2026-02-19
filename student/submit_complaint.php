@@ -19,18 +19,18 @@ include '../includes/header.php';
             <div class="row g-4">
                 <div class="col-lg-8">
                     <div class="bg-white p-5 rounded-5 shadow-sm border-0">
-                        <form action="process_complaint.php" method="POST" enctype="multipart/form-data">
+                        <form id="complaintForm" action="process_complaint.php" method="POST" enctype="multipart/form-data">
 
                             <div class="row g-4">
                                 <div class="col-md-6">
                                     <label class="form-label fw-bold small text-uppercase">Issue Category</label>
                                     <select class="form-select border-0 bg-light p-3 rounded-4" name="category" required>
                                         <option value="">Select Category...</option>
-                                        <option>Academic & Faculty</option>
-                                        <option>Hostel & Housing</option>
-                                        <option>IT & WiFi Support</option>
-                                        <option>Facility Maintenance</option>
-                                        <option>Canteen & Food</option>
+                                        <option value="Academic">Academic & Faculty</option>
+                                        <option value="Hostel">Hostel & Housing</option>
+                                        <option value="IT">IT & WiFi Support</option>
+                                        <option value="Facility">Facility Maintenance</option>
+                                        <option value="Canteen">Canteen & Food</option>
                                     </select>
                                 </div>
 
@@ -43,19 +43,20 @@ include '../includes/header.php';
                                         <input type="radio" class="btn-check" name="priority" id="normal" value="Normal" checked>
                                         <label class="btn btn-outline-primary w-100 rounded-pill p-3" for="normal">Normal</label>
                                     </div>
+                                    <div id="priority-error-container"></div>
                                 </div>
 
                                 <div class="col-12">
                                     <label class="form-label fw-bold small text-uppercase">Detailed Description</label>
-                                    <textarea class="form-control border-0 bg-light p-4 rounded-4" name="description" rows="6" placeholder="Please describe the issue in detail (e.g., Room number, specific error, time occurred)..." required></textarea>
+                                    <textarea class="form-control border-0 bg-light p-4 rounded-4" name="description" id="description" rows="6" placeholder="Please describe the issue in detail (e.g., Room number, specific error, time occurred)..." required></textarea>
                                 </div>
 
                                 <div class="col-12">
                                     <label class="form-label fw-bold small text-uppercase">Attach Evidence (Optional)</label>
                                     <div class="p-4 border-2 border-dashed rounded-4 text-center bg-light" style="border: 2px dashed #dee2e6;">
                                         <i class="bi bi-cloud-arrow-up fs-1 text-primary mb-2"></i>
-                                        <input type="file" class="form-control" name="evidence" accept="image/*,.pdf">
-                                        <small class="text-muted d-block mt-2">Upload photos or documents to help us understand the issue better.</small>
+                                        <input type="file" class="form-control" name="evidence" id="evidence" accept="image/*,.pdf">
+                                        <small class="text-muted d-block mt-2">Upload photos or documents (Max 5MB: JPG, PNG, PDF).</small>
                                     </div>
                                 </div>
 
@@ -75,15 +76,15 @@ include '../includes/header.php';
                         <ul class="list-unstyled">
                             <li class="mb-4 d-flex">
                                 <i class="bi bi-1-circle-fill text-primary me-3 fs-4"></i>
-                                <p class="small mb-0 text-muted"><strong>Be Specific:</strong> Mention exact locations like "Room 302, Floor 3" instead of just "Hostel".</p>
+                                <p class="small mb-0 text-muted"><strong>Be Specific:</strong> Mention exact locations like "Room 302, Floor 3".</p>
                             </li>
                             <li class="mb-4 d-flex">
                                 <i class="bi bi-2-circle-fill text-primary me-3 fs-4"></i>
-                                <p class="small mb-0 text-muted"><strong>Attach Photos:</strong> Pictures help the maintenance team identify parts or tools needed before they arrive.</p>
+                                <p class="small mb-0 text-muted"><strong>Attach Photos:</strong> Helps the team identify tools needed before arrival.</p>
                             </li>
                             <li class="d-flex">
                                 <i class="bi bi-3-circle-fill text-primary me-3 fs-4"></i>
-                                <p class="small mb-0 text-muted"><strong>Check Status:</strong> Once submitted, you can track the live progress on your main dashboard.</p>
+                                <p class="small mb-0 text-muted"><strong>Check Status:</strong> Track live progress on your dashboard.</p>
                             </li>
                         </ul>
                     </div>
@@ -101,22 +102,76 @@ include '../includes/header.php';
                     </div>
                 </div>
             </div>
-
-            <div class="mt-5 pt-4">
-                <h4 class="fw-bold mb-4">Your Last 3 Submissions</h4>
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <div class="bg-white p-3 rounded-4 shadow-sm border-start border-warning border-5">
-                            <small class="text-muted">#CMS-8812</small>
-                            <h6 class="fw-bold mb-1">Broken AC in Lab 4</h6>
-                            <span class="badge bg-warning text-dark rounded-pill" style="font-size: 0.7rem;">In Progress</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
+
+<style>
+    /* CSS for validation messages - No harm to original layout */
+    .error {
+        color: #dc3545;
+        font-size: 0.75rem;
+        font-weight: 700;
+        margin-top: 5px;
+        display: block;
+    }
+
+    input.error,
+    select.error,
+    textarea.error {
+        border: 1px solid #dc3545 !important;
+        background-color: #fff8f8 !important;
+    }
+</style>
+
+<script>
+    $(document).ready(function() {
+        $("#complaintForm").validate({
+            rules: {
+                category: "required",
+                priority: "required",
+                description: {
+                    required: true,
+                    minlength: 20
+                },
+                evidence: {
+                    extension: "jpg|jpeg|png|pdf",
+                    filesize: 5242880 // 5MB limit
+                }
+            },
+            messages: {
+                category: "Please select a category",
+                description: {
+                    required: "Description cannot be empty",
+                    minlength: "Please provide at least 20 characters of detail"
+                },
+                evidence: {
+                    extension: "Only JPG, PNG, and PDF files are allowed"
+                }
+            },
+            errorPlacement: function(error, element) {
+                if (element.attr("name") == "priority") {
+                    error.appendTo("#priority-error-container");
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            submitHandler: function(form) {
+                // Optional: Show a loading state on the button
+                $(form).find('button[type="submit"]').html('Processing... <div class="spinner-border spinner-border-sm ms-2"></div>').attr('disabled', true);
+                form.submit();
+            }
+        });
+
+        // Custom rule for file size
+        $.validator.addMethod('filesize', function(value, element, param) {
+            return this.optional(element) || (element.files[0].size <= param)
+        }, 'File size must be less than 5MB');
+    });
+</script>
 
 <?php include '../includes/footer.php'; ?>

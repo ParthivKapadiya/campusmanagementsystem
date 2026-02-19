@@ -1,4 +1,5 @@
 <?php
+session_start();
 $pageTitle = "System Command | Admin Console";
 ?>
 <!DOCTYPE html>
@@ -25,7 +26,8 @@ $pageTitle = "System Command | Admin Console";
             color: #1e293b;
         }
 
-        /* --- SIDEBAR (Consistent with Theme) --- */
+        /* --- Sidebar & Layout --- */
+        /* These styles ensure the main content respects the external sidebar's width */
         .sidebar-admin {
             width: var(--sidebar-width);
             background: var(--admin-dark);
@@ -35,36 +37,6 @@ $pageTitle = "System Command | Admin Console";
             top: 0;
             padding: 45px 25px;
             z-index: 1000;
-        }
-
-        .sidebar-admin .brand {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: white;
-            margin-bottom: 50px;
-        }
-
-        .sidebar-admin .brand span {
-            color: var(--admin-indigo);
-        }
-
-        .nav-link-admin {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            color: rgba(255, 255, 255, 0.5);
-            padding: 15px 20px;
-            border-radius: 16px;
-            text-decoration: none;
-            font-weight: 600;
-            margin-bottom: 10px;
-            transition: 0.3s;
-        }
-
-        .nav-link-admin:hover,
-        .nav-link-admin.active {
-            background: rgba(99, 102, 241, 0.15);
-            color: var(--admin-indigo);
         }
 
         .main-content {
@@ -153,23 +125,26 @@ $pageTitle = "System Command | Admin Console";
             background: var(--admin-indigo);
             color: white;
         }
+
+        /* --- Validation Styles --- */
+        .error {
+            color: #6366f1;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .is-invalid {
+            border: 2px solid var(--admin-indigo) !important;
+            background-color: #f5f3ff !important;
+        }
     </style>
 </head>
 
 <body>
 
-    <div class="sidebar-admin">
-        <div class="brand">Admin<span>CMS</span></div>
-        <div class="nav-group">
-            <a href="dashboard.php" class="nav-link-admin active"><i class="bi bi-cpu-fill"></i> System Hub</a>
-            <a href="user_account.php" class="nav-link-admin"><i class="bi bi-people-fill"></i> User Accounts</a>
-            <a href="flow_monitor.php" class="nav-link-admin"><i class="bi bi-activity"></i> Flow Monitor</a>
-            <a href="security_logs.php" class="nav-link-admin"><i class="bi bi-shield-lock-fill"></i> Security Logs</a>
-            <div style="margin-top: 220px;">
-                <a href="#" class="nav-link-admin text-danger"><i class="bi bi-power"></i> Shutdown</a>
-            </div>
-        </div>
-    </div>
+    <?php include '../includes/admin_sidebar.php'; ?>
 
     <div class="main-content">
         <div class="d-flex justify-content-between align-items-center mb-5">
@@ -280,38 +255,77 @@ $pageTitle = "System Command | Admin Console";
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form id="provisionForm" action="process_account.php" method="POST">
                         <div class="mb-4">
                             <label class="form-label small fw-bold text-muted">ACCOUNT HOLDER NAME</label>
-                            <input type="text" class="form-control border-0 bg-light p-3 rounded-4" placeholder="Enter full name...">
+                            <input type="text" name="fullname" class="form-control border-0 bg-light p-3 rounded-4" placeholder="Enter full name...">
                         </div>
                         <div class="mb-4">
-                            <label class="form-label small fw-bold text-muted">ACCESS LEVEL (SRS 4.4)</label>
-                            <select class="form-select border-0 bg-light p-3 rounded-4 fw-bold">
-                                <option>Student Access</option>
-                                <option>HOD Authority</option>
-                                <option>Director Oversight</option>
+                            <label class="form-label small fw-bold text-muted">ACCESS LEVEL</label>
+                            <select name="access_level" class="form-select border-0 bg-light p-3 rounded-4 fw-bold">
+                                <option value="">Select Level...</option>
+                                <option value="student">Student Access</option>
+                                <option value="hod">HOD Authority</option>
+                                <option value="director">Director Oversight</option>
                             </select>
                         </div>
                         <div class="mb-4">
                             <label class="form-label small fw-bold text-muted">DEPARTMENT ASSIGNMENT</label>
-                            <select class="form-select border-0 bg-light p-3 rounded-4 fw-bold">
-                                <option>Information Technology</option>
-                                <option>Mechanical Eng.</option>
-                                <option>Civil Eng.</option>
-                                <option>Management</option>
+                            <select name="department" class="form-select border-0 bg-light p-3 rounded-4 fw-bold">
+                                <option value="">Select Dept...</option>
+                                <option value="IT">Information Technology</option>
+                                <option value="ME">Mechanical Eng.</option>
+                                <option value="CE">Civil Eng.</option>
+                                <option value="MGMT">Management</option>
                             </select>
                         </div>
-                        <button type="button" class="btn btn-primary w-100 p-3 rounded-4 fw-bold shadow-lg" style="background: var(--admin-indigo);" data-bs-dismiss="modal">Initialize Authority</button>
+                        <button type="submit" class="btn btn-primary w-100 p-3 rounded-4 fw-bold shadow-lg" style="background: var(--admin-indigo);">
+                            Initialize Authority
+                        </button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // jQuery Validation logic
+            $("#provisionForm").validate({
+                rules: {
+                    fullname: {
+                        required: true,
+                        minlength: 3
+                    },
+                    access_level: "required",
+                    department: "required"
+                },
+                messages: {
+                    fullname: "Please enter the identity name",
+                    access_level: "Assign a privilege level",
+                    department: "Assign a department"
+                },
+                errorPlacement: function(error, element) {
+                    error.insertAfter(element);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    const btn = $(form).find('button[type="submit"]');
+                    btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Provisioning...');
+                    form.submit();
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
