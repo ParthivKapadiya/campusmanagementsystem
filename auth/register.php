@@ -12,6 +12,80 @@ if (file_exists($root . 'db_config.php')) {
     die("Critical Error: The file " . $root . "db_config.php was not found. Please check your folder names.");
 }
 ?>
+<script>
+    document.getElementById('campusRegForm').addEventListener('submit', function(event) {
+        let isValid = true;
+        const firstName = document.getElementsByName('firstName')[0];
+        const lastName = document.getElementsByName('lastName')[0];
+        const email = document.getElementsByName('email')[0];
+        const phone = document.getElementsByName('phone')[0];
+        const password = document.getElementsByName('password')[0];
+        const confirmPassword = document.getElementsByName('confirmPassword')[0];
+        const gender = document.getElementsByName('gender')[0];
+        const terms = document.getElementById('terms');
+
+        // 1. Check for Empty Fields
+        const requiredFields = [firstName, lastName, email, phone, password, confirmPassword, gender];
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                isValid = false;
+                field.classList.add('is-invalid');
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+
+        // 2. Password Match Validation
+        if (password.value !== confirmPassword.value) {
+            isValid = false;
+            confirmPassword.classList.add('is-invalid');
+            alert("Passwords do not match!");
+        }
+
+        // 3. Password Strength (Minimum 6 characters)
+        if (password.value.length < 6) {
+            isValid = false;
+            password.classList.add('is-invalid');
+            alert("Password must be at least 6 characters long.");
+        }
+
+        // 4. Email Format Validation
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email.value)) {
+            isValid = false;
+            email.classList.add('is-invalid');
+            alert("Please enter a valid email address.");
+        }
+
+        // 5. Phone Number Validation (Basic 10 digit)
+        const phonePattern = /^\d{10,}$/;
+        if (!phonePattern.test(phone.value.replace(/\D/g, ""))) {
+            isValid = false;
+            phone.classList.add('is-invalid');
+            alert("Please enter a valid phone number.");
+        }
+
+        // 6. Terms and Conditions
+        if (!terms.checked) {
+            isValid = false;
+            alert("You must agree to the Terms of Service.");
+        }
+
+        // Final Action
+        if (!isValid) {
+            event.preventDefault(); // Stop form from submitting
+        }
+    });
+
+    // Real-time "is-invalid" remover
+    document.querySelectorAll('.form-control, .form-select').forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.value.trim() !== "") {
+                this.classList.remove('is-invalid');
+            }
+        });
+    });
+</script>
 
 <style>
     /* -------------------- REGISTER PAGE PREMIUM CSS -------------------- */
@@ -230,49 +304,74 @@ if (file_exists($root . 'db_config.php')) {
     </div>
 </div>
 
+<!-- REQUIRED LIBRARIES -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
+
+<script>
+    $(function() {
+
+        $.validator.addMethod("lettersOnly", function(value, element) {
+            return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
+        });
+
+        $.validator.addMethod("phoneValid", function(value) {
+            return /^[0-9+\-\s()]+$/.test(value);
+        });
+
+        $("#campusRegForm").validate({
+            rules: {
+                firstName: {
+                    required: true,
+                    minlength: 2,
+                    lettersOnly: true
+                },
+                lastName: {
+                    required: true,
+                    minlength: 2,
+                    lettersOnly: true
+                },
+                email: {
+                    required: true,
+                    email: true
+                },
+                phone: {
+                    required: true,
+                    phoneValid: true,
+                    minlength: 10
+                },
+                password: {
+                    required: true,
+                    minlength: 8
+                },
+                confirmPassword: {
+                    required: true,
+                    equalTo: "[name='password']"
+                },
+                gender: {
+                    required: true
+                },
+                terms: {
+                    required: true
+                }
+            },
+
+            errorElement: "small",
+            errorClass: "text-danger",
+
+            highlight: el => $(el).addClass("is-invalid").removeClass("is-valid"),
+            unhighlight: el => $(el).removeClass("is-invalid").addClass("is-valid"),
+
+            errorPlacement: function(error, element) {
+                element.attr("type") === "checkbox" ?
+                    error.insertAfter(element.closest(".form-check")) :
+                    error.insertAfter(element);
+            }
+        });
+
+    });
+</script>
 <?php
-// PHP BACKEND PROCESSING
-if (isset($_POST['reg_btn'])) {
-    // 1. Collect Data
-    $fname    = mysqli_real_escape_string($con, $_POST['firstName']);
-    $lname    = mysqli_real_escape_string($con, $_POST['lastName']);
-    $email    = mysqli_real_escape_string($con, $_POST['email']);
-    $phone    = mysqli_real_escape_string($con, $_POST['phone']);
-    $pass     = $_POST['password'];
-    $confirm  = $_POST['confirmPassword'];
-    $gender   = $_POST['gender'];
-    $fullname = $fname . " " . $lname;
-
-    // 2. Simple Validation Check
-    if ($pass !== $confirm) {
-        echo "<script>alert('Passwords do not match!');</script>";
-    } else {
-        // Handle File Upload
-        $profile_picture = $_FILES['profile_picture']['name'];
-        $tmp_name = $_FILES['profile_picture']['tmp_name'];
-        $upload_dir = "assets/uploads/profiles/";
-
-        // Ensure directory exists
-        if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
-
-        // 3. Encrypt Password (World Class Security)
-        $hashed_password = password_hash($pass, PASSWORD_BCRYPT);
-
-        // 4. Database Query
-        $insert_query = "INSERT INTO `users`(`name`, `email`, `password`, `mobile`, `gender`, `profile_picture`, `role`) 
-                         VALUES ('$fullname', '$email', '$hashed_password', '$phone', '$gender', '$profile_picture', 'student')";
-
-        if (mysqli_query($con, $insert_query)) {
-            move_uploaded_file($tmp_name, $upload_dir . $profile_picture);
-            echo "<script>
-                    alert('Registration successful! Welcome to CampusCMS.');
-                    window.location.href='login.php';
-                  </script>";
-        } else {
-            echo "<script>alert('Database Error: Unable to register.');</script>";
-        }
-    }
-}
-
-include 'includes/footer.php';
+include_once $root . 'includes/footer.php';
 ?>

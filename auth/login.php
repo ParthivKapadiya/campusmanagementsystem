@@ -124,7 +124,6 @@ include_once dirname(__FILE__) . '/../includes/navbar.php';
         }
     }
 </style>
-
 <div class="login-section">
     <div class="container d-flex justify-content-center">
         <div class="login-container">
@@ -139,91 +138,162 @@ include_once dirname(__FILE__) . '/../includes/navbar.php';
             </div>
 
             <div class="login-form-area">
-                <div class="mb-4">
-                    <h3 class="fw-bold">Login</h3>
-                    <p class="text-muted">Enter your credentials to continue</p>
-                </div>
+                <h3 class="fw-bold mb-2">Login</h3>
+                <p class="text-muted mb-4">Enter your credentials to continue</p>
 
-                <div class="role-tabs">
-                    <div class="role-tab active">Student</div>
-                    <div class="role-tab">Faculty</div>
-                    <div class="role-tab">Admin</div>
-                </div>
+                <form action="login.php" method="POST" novalidate>
 
-                <form action="login.php" method="POST">
+                    <!-- EMAIL -->
                     <div class="mb-4">
                         <label class="form-label">Email Address</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-transparent border-end-0" style="border-radius: 15px 0 0 15px; border: 2px solid #f1f5f9;">
-                                <i class="bi bi-envelope text-muted"></i>
-                            </span>
-                            <input type="email" name="email" class="form-control border-start-0 shadow-none" placeholder="name@university.edu" required>
-                        </div>
+                        <input
+                            type="email"
+                            name="email"
+                            class="form-control"
+                            placeholder="name@university.edu"
+                            data-validation="required email"
+                            data-min="5">
+                        <small id="email_error" style="display:none;"></small>
                     </div>
 
+                    <!-- PASSWORD -->
                     <div class="mb-4">
-                        <div class="d-flex justify-content-between">
-                            <label class="form-label">Password</label>
-                            <a href="#" class="text-primary small fw-bold text-decoration-none">Forgot?</a>
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-text bg-transparent border-end-0" style="border-radius: 15px 0 0 15px; border: 2px solid #f1f5f9;">
-                                <i class="bi bi-shield-lock text-muted"></i>
-                            </span>
-                            <input type="password" name="password" class="form-control border-start-0 shadow-none" placeholder="••••••••" required>
-                        </div>
+                        <label class="form-label">Password</label>
+                        <input
+                            type="password"
+                            name="password"
+                            class="form-control"
+                            placeholder="••••••••"
+                            data-validation="required min"
+                            data-min="6">
+                        <small id="password_error" style="display:none;"></small>
                     </div>
 
+                    <!-- REMEMBER -->
                     <div class="mb-4 form-check">
-                        <input type="checkbox" class="form-check-input" id="remember">
-                        <label class="form-check-label small text-muted" for="remember">Keep me logged in</label>
+                        <input
+                            type="checkbox"
+                            class="form-check-input"
+                            id="remember"
+                            name="remember"
+                            data-validation="required">
+                        <label class="form-check-label" for="remember">Keep me logged in</label>
+                        <small id="remember_error" style="display:none;"></small>
                     </div>
 
                     <button type="submit" name="login_btn" class="btn btn-main w-100 py-3 shadow-lg fs-5">
                         Sign In <i class="bi bi-box-arrow-in-right ms-2"></i>
                     </button>
+                    <p class="text-center mt-5 mb-0 text-muted">
+                        New to the platform? <a href="register.php" class="text-primary fw-bold text-decoration-none">Create Account</a>
+                    </p>
                 </form>
-
-                <p class="text-center mt-5 mb-0 text-muted">
-                    New to the platform? <a href="register.php" class="text-primary fw-bold text-decoration-none">Create Account</a>
-                </p>
             </div>
 
         </div>
     </div>
 </div>
 
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<!-- YOUR ORIGINAL VALIDATION SCRIPT (UNCHANGED) -->
+<script>
+    $(document).ready(function() {
+        function validateInput(input) {
+            var field = $(input);
+            var value = field.val() ? field.val().trim() : "";
+            var errorfield = $("#" + field.attr("name") + "_error");
+            var validationType = field.data("validation");
+            var minLength = field.data("min") || 0;
+            var maxLength = field.data("max") || 9999;
+            var fileSize = field.data("filesize") || 0;
+            var fileType = field.data("filetype") || "";
+            let errorMessage = "";
+            var isFileInput = field.attr("type") === "file";
+            var isCheckbox = field.attr("type") === "checkbox";
+
+            if (validationType) {
+                if (validationType.includes("required")) {
+                    if (isCheckbox && !field.is(":checked")) {
+                        errorMessage = "This field is required.";
+                    } else if (!isCheckbox && value === "") {
+                        errorMessage = "This field is required.";
+                    }
+                }
+
+                if (value !== "" && !errorMessage) {
+                    if (validationType.includes("min") && value.length < minLength) {
+                        errorMessage = `Minimum ${minLength} characters required.`;
+                    }
+
+                    if (validationType.includes("email")) {
+                        const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w]{2,4}$/;
+                        if (!emailRegex.test(value)) {
+                            errorMessage = "Please enter a valid email address.";
+                        }
+                    }
+                }
+
+                if (errorMessage) {
+                    errorfield.text(errorMessage).show().addClass("text-danger small");
+                    field.addClass("is-invalid").removeClass("is-valid");
+                    return false;
+                } else {
+                    errorfield.text("").hide();
+                    field.removeClass("is-invalid").addClass("is-valid");
+                    return true;
+                }
+            }
+            return true;
+        }
+
+        $("input, textarea, select").on("input change", function() {
+            validateInput(this);
+        });
+
+        $("form").on("submit", function(e) {
+            let isValid = true;
+            $(this).find("input, textarea, select").each(function() {
+                if (!validateInput(this)) isValid = false;
+            });
+            if (!isValid) e.preventDefault();
+        });
+    });
+</script>
+
 <!-- <?php
-// // PHP LOGIN LOGIC
-// if (isset($_POST['login_btn'])) {
-//     // $email = mysqli_real_escape_string($con, $_POST['email']);
-//     $password = $_POST['password'];
+        // // PHP LOGIN LOGIC
+        // if (isset($_POST['login_btn'])) {
+        //     // $email = mysqli_real_escape_string($con, $_POST['email']);
+        //     $password = $_POST['password'];
 
-//     // $query = "SELECT * FROM users WHERE email = '$email'";
-//     // $result = mysqli_query($con, $query);
+        //     // $query = "SELECT * FROM users WHERE email = '$email'";
+        //     // $result = mysqli_query($con, $query);
 
-//     // if (mysqli_num_rows($result) > 0) {
-//         $row = mysqli_fetch_assoc($result);
+        //     // if (mysqli_num_rows($result) > 0) {
+        //         $row = mysqli_fetch_assoc($result);
 
-//         // Verify the hashed password
-//         if (password_verify($password, $row['password'])) {
-//             // Start session and save user info
-//             session_start();
-//             $_SESSION['user_id'] = $row['id'];
-//             $_SESSION['user_name'] = $row['name'];
-//             $_SESSION['user_role'] = $row['role'];
+        //         // Verify the hashed password
+        //         if (password_verify($password, $row['password'])) {
+        //             // Start session and save user info
+        //             session_start();
+        //             $_SESSION['user_id'] = $row['id'];
+        //             $_SESSION['user_name'] = $row['name'];
+        //             $_SESSION['user_role'] = $row['role'];
 
-//             echo "<script>
-//                     alert('Login Successful! Redirecting to Dashboard...');
-//                     window.location.href='../dashboard/index.php';
-//                   </script>";
-//         } else {
-//             echo "<script>alert('Invalid Password!');</script>";
-//         }
-//     } else {
-//         echo "<script>alert('No account found with this email!');</script>";
-//     } 
+        //             echo "<script>
+        //                     alert('Login Successful! Redirecting to Dashboard...');
+        //                     window.location.href='../dashboard/index.php';
+        //                   </script>";
+        //         } else {
+        //             echo "<script>alert('Invalid Password!');</script>";
+        //         }
+        //     } else {
+        //         echo "<script>alert('No account found with this email!');</script>";
+        //     } 
 
 
-include '../includes/footer.php';
-?>
+        include '../includes/footer.php';
+        ?>

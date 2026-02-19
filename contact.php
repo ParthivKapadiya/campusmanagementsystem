@@ -15,6 +15,69 @@ if (file_exists($root . 'includes/db_connect.php')) {
 }
 ?>
 
+<!-- REQUIRED JS -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+
+<script>
+    $(function() {
+
+        $.validator.addMethod("lettersOnly", function(value) {
+            return /^[a-zA-Z\s]+$/.test(value);
+        });
+
+        $("#contactForm").validate({
+            rules: {
+                first_name: {
+                    required: true,
+                    minlength: 2,
+                    lettersOnly: true
+                },
+                email: {
+                    required: true,
+                    email: true
+                },
+                department: {
+                    required: true
+                },
+                message: {
+                    required: true,
+                    minlength: 10
+                }
+            },
+
+            messages: {
+                first_name: {
+                    required: "First name is required",
+                    minlength: "Minimum 2 characters"
+                },
+                email: {
+                    required: "Email is required",
+                    email: "Enter a valid email"
+                },
+                department: {
+                    required: "Select a department"
+                },
+                message: {
+                    required: "Message is required",
+                    minlength: "At least 10 characters"
+                }
+            },
+
+            errorElement: "small",
+            errorClass: "text-danger",
+
+            highlight: el => $(el).addClass("is-invalid").removeClass("is-valid"),
+            unhighlight: el => $(el).removeClass("is-invalid").addClass("is-valid"),
+
+            submitHandler: function(form) {
+                form.submit();
+            }
+        });
+
+    });
+</script>
+
 <style>
     /* -------------------- CONTACT PAGE WORLD-CLASS CSS -------------------- */
     :root {
@@ -167,47 +230,52 @@ if (file_exists($root . 'includes/db_connect.php')) {
         <div class="contact-header">
             <span class="badge-glow mb-3">24/7 Digital Support</span>
             <h1>Have a Question? <span>Let's Talk.</span></h1>
-            <p class="lead text-muted">We typically respond to student and faculty inquiries within 2 hours.</p>
+            <p class="lead text-muted">We usually reply within 2 hours.</p>
         </div>
 
         <div class="row g-5">
             <div class="col-lg-7">
                 <div class="contact-glass-card">
-                    <h3 class="fw-bold mb-4" style="color: var(--dark);">Direct Messaging</h3>
-                    <form action="process_contact.php" method="POST">
+                    <h3 class="fw-bold mb-4">Direct Messaging</h3>
+
+                    <form action="process_contact.php" method="POST" id="contactForm">
+
                         <div class="row">
                             <div class="col-md-6 mb-4">
                                 <label class="form-label">First Name</label>
-                                <input type="text" class="form-control shadow-none" placeholder="e.g. John" required>
+                                <input type="text" name="first_name" class="form-control" placeholder="John">
                             </div>
+
                             <div class="col-md-6 mb-4">
                                 <label class="form-label">Email Address</label>
-                                <input type="email" class="form-control shadow-none" placeholder="name@university.edu" required>
+                                <input type="email" name="email" class="form-control" placeholder="name@university.edu">
                             </div>
                         </div>
 
                         <div class="mb-4">
                             <label class="form-label">Inquiry Department</label>
-                            <select class="form-select shadow-none">
-                                <option selected disabled>Choose Department...</option>
-                                <option>General Administration</option>
-                                <option>Technical Support / IT</option>
-                                <option>Facility Management</option>
-                                <option>Security & Safety</option>
+                            <select name="department" class="form-select">
+                                <option value="">Choose Department...</option>
+                                <option value="Admin">General Administration</option>
+                                <option value="IT">Technical Support / IT</option>
+                                <option value="Facility">Facility Management</option>
+                                <option value="Security">Security & Safety</option>
                             </select>
                         </div>
 
                         <div class="mb-4">
                             <label class="form-label">Your Message</label>
-                            <textarea class="form-control shadow-none" rows="5" placeholder="Describe your issue or query in detail..." required></textarea>
+                            <textarea name="message" class="form-control" rows="5"
+                                placeholder="Describe your issue..."></textarea>
                         </div>
 
-                        <button type="submit" class="btn btn-main w-100 py-3 shadow-lg fs-5">
+                        <button type="submit" class="btn btn-main w-100 py-3 fs-5">
                             Send Message <i class="bi bi-send-check-fill ms-2 text-warning"></i>
                         </button>
                     </form>
                 </div>
             </div>
+
 
             <div class="col-lg-5">
                 <div class="info-sidebar">
@@ -251,8 +319,9 @@ if (file_exists($root . 'includes/db_connect.php')) {
                 </div>
             </div>
         </div>
-
     </div>
 </div>
+</div>
+
 
 <?php include_once $root . 'includes/footer.php'; ?>
