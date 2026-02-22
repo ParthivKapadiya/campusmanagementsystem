@@ -54,7 +54,7 @@ include 'includes/navbar.php';
                     </div>
                 </div>
                 <div class="col-lg-6 text-center">
-                    <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0" alt="Hero Image" class="img-fluid hero-img shadow-lg">
+                    <img src="assets/images/hero.jpeg" alt="Hero Image" class="img-fluid hero-img shadow-lg">
                 </div>
             </div>
         </div>
@@ -188,10 +188,10 @@ include 'includes/navbar.php';
             <div class="row g-4 mt-2 justify-content-center">
                 <?php
                 $depts = [
-                    ['Computer Science', 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97', 'Tech & Innovation'],
-                    ['Electrical', 'https://images.unsplash.com/photo-1581092334651-dd3c6542862a', 'Power & Systems'],
-                    ['Mechanical', 'https://images.unsplash.com/photo-1537462715879-360eeb61a0ad', 'Design & Dynamics'],
-                    ['Administration', 'https://images.unsplash.com/photo-1497366216548-37526070297c', 'Operations & Support']
+                    ['Computer Science', 'assets/images/cs.jpeg', 'Tech & Innovation'],
+                    ['Electrical', 'assets/images/electrical.jpeg', 'Power & Circuits'],
+                    ['Mechanical', 'assets/images/mechanical.jpeg', 'Design & Dynamics'],
+                    ['Administration', 'assets/images/administration.jpeg', 'Operations & Support']
                 ];
                 foreach ($depts as $dept) {
                     echo '

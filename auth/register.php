@@ -4,13 +4,16 @@ $pageTitle = "Login | CampusCMS";
 // Use absolute paths based on the document root
 $root = $_SERVER['DOCUMENT_ROOT'] . '/campusmanagementsystem/';
 
-if (file_exists($root . 'db_config.php')) {
-    include_once $root . 'db_config.php';
-    include_once $root . 'includes/header.php';
-    include_once $root . 'includes/navbar.php';
-} else {
-    die("Critical Error: The file " . $root . "db_config.php was not found. Please check your folder names.");
-}
+// if (file_exists($root . 'db_config.php')) {
+//     include_once $root . 'db_config.php';
+//     include_once $root . 'includes/header.php';
+//     include_once $root . 'includes/navbar.php';
+// } else {
+//     die("Critical Error: The file " . $root . "db_config.php was not found. Please check your folder names.");
+// }
+include_once dirname(__FILE__) . '/../includes/header.php';
+include_once dirname(__FILE__) . '/../includes/navbar.php';
+?>
 ?>
 <script>
     document.getElementById('campusRegForm').addEventListener('submit', function(event) {
@@ -214,7 +217,7 @@ if (file_exists($root . 'db_config.php')) {
 
                                 <div class="col-md-6 mb-4">
                                     <label class="form-label">Last Name</label>
-                                    <input type="text" class="form-control" name="lastName" placeholder="e.g. Smith" required>
+                                    <input type="text" class="form-control" name="lastName" placeholder="e.g. Carry" required>
                                 </div>
 
                                 <div class="col-md-6 mb-4">
@@ -224,7 +227,7 @@ if (file_exists($root . 'db_config.php')) {
 
                                 <div class="col-md-6 mb-4">
                                     <label class="form-label">Phone Number</label>
-                                    <input type="tel" class="form-control" name="phone" placeholder="+1 (555) 000-0000" required>
+                                    <input type="tel" class="form-control" name="phone" placeholder="+91 1234567890" required>
                                 </div>
 
                                 <div class="col-12 mb-4 mt-2">

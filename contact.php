@@ -291,7 +291,7 @@ if (file_exists($root . 'includes/db_connect.php')) {
                         <div class="hub-icon"><i class="bi bi-headset"></i></div>
                         <div class="hub-text">
                             <h6>Support Hotline</h6>
-                            <p class="mb-0 text-muted small">+1 (800) CAMPUS-CMS</p>
+                            <p class="mb-0 text-muted small">+91 1234567890</p>
                         </div>
                     </div>
 
