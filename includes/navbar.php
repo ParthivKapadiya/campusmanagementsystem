@@ -73,4 +73,4 @@ $auth_prefix = $is_in_auth ? '' : 'auth/';
         </div>
 
     </div>
-</nav>
+</nav>  
