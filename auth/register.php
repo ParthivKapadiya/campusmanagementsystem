@@ -345,6 +345,7 @@ if ($db_found) {
                             <div class="col-md-4">
                                 <button class="btn btn-social"><i class="bi bi-microsoft me-2"></i> Microsoft</button>
                             </div>
+
                         </div>
 
                         <p class="text-center mt-5 mb-0 text-muted">

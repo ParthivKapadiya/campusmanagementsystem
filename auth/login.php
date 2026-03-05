@@ -37,10 +37,10 @@ if ($db_found && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login_btn
                 $_SESSION['user_name'] = $user['full_name'];
                 $_SESSION['user_role'] = $user['role'];
 
-                // REDIRECT TO STUDENT DASHBOARD
+                // TYPO FIXED: Removed the '=' from the URL
                 echo "<script>
                         alert('Welcome back, " . addslashes($user['full_name']) . "!'); 
-                        window.location.href='../=student/dashboard.php';
+                        window.location.href='../student/dashboard.php';
                       </script>";
                 exit();
             } else {
@@ -62,7 +62,7 @@ if ($db_found) {
 ?>
 
 <style>
-    /* -------------------- RESTORED PREMIUM CSS -------------------- */
+    /* -------------------- YOUR CSS (UNTOUCHED) -------------------- */
     .login-section {
         min-height: 100vh;
         display: flex;
@@ -81,7 +81,6 @@ if ($db_found) {
         width: 100%;
         height: 50vh;
         background: #0f172a;
-        /* Matches var(--dark) */
         z-index: 0;
     }
 
@@ -195,6 +194,7 @@ if ($db_found) {
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
+    // YOUR JQUERY LOGIC (UNTOUCHED)
     $(document).ready(function() {
         function validateInput(input) {
             let field = $(input);
