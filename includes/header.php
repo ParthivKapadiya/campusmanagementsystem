@@ -30,4 +30,4 @@ $prefix = $is_in_auth ? '../' : '';
 
 <body>
 
-    <?php include $prefix . 'navbar.php'; ?>
+    <?php include_once __DIR__ . '/navbar.php'; ?>

@@ -1,19 +1,69 @@
 <?php
-$pageTitle = "Login | CampusCMS";
+// 1. Silent Configuration
+$pageTitle = "Register | CampusCMS";
 
-// Use absolute paths based on the document root
-$root = $_SERVER['DOCUMENT_ROOT'] . '/campusmanagementsystem/';
+// 2. Database Connection Logic (Silent)
+$possible_paths = [
+    __DIR__ . '/includes/db.php',
+    __DIR__ . '/../includes/db.php',
+    $_SERVER['DOCUMENT_ROOT'] . '/campusmanagementsystem/includes/db.php'
+];
 
-// if (file_exists($root . 'db_config.php')) {
-//     include_once $root . 'db_config.php';
-//     include_once $root . 'includes/header.php';
-//     include_once $root . 'includes/navbar.php';
-// } else {
-//     die("Critical Error: The file " . $root . "db_config.php was not found. Please check your folder names.");
-// }
-include_once dirname(__FILE__) . '/../includes/header.php';
-include_once dirname(__FILE__) . '/../includes/navbar.php';
-?>
+$db_found = false;
+$path = ""; // Initialize to prevent errors in Section 5
+foreach ($possible_paths as $p) {
+    if (file_exists($p)) {
+        require_once $p;
+        $path = $p;
+        $db_found = true;
+        break;
+    }
+}
+
+// 3. Form Submission Logic
+if ($db_found && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['reg_btn'])) {
+
+    $fname    = trim($_POST['firstName'] ?? '');
+    $lname    = trim($_POST['lastName'] ?? '');
+    $email    = trim($_POST['email'] ?? '');
+    $phone    = trim($_POST['phone'] ?? '');
+    $gender   = $_POST['gender'] ?? '';
+    $password = $_POST['password'] ?? '';
+    $fullName = $fname . " " . $lname;
+
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+    try {
+        $query = "INSERT INTO users (full_name, email, phone, gender, password, role) 
+                  VALUES (:name, :email, :phone, :gender, :pass, :role)";
+
+        $stmt = $conn->prepare($query);
+        $stmt->execute([
+            ':name'   => $fullName,
+            ':email'  => $email,
+            ':phone'  => $phone,
+            ':gender' => $gender,
+            ':pass'   => $hashed_password,
+            ':role'   => 'student'
+        ]);
+
+        echo "<script>alert('Registration Successful!'); window.location='login.php';</script>";
+        exit();
+    } catch (PDOException $e) {
+        if ($e->getCode() == 23000) {
+            echo "<script>alert('Error: This email is already registered.');</script>";
+        }
+    }
+}
+
+// 4. Layout Includes (Only runs if DB path was found)
+if ($db_found) {
+    $headerPath = str_replace('db.php', 'header.php', $path);
+    $navbarPath = str_replace('db.php', 'navbar.php', $path);
+
+    if (file_exists($headerPath)) include_once $headerPath;
+    if (file_exists($navbarPath)) include_once $navbarPath;
+}
 ?>
 <script>
     document.getElementById('campusRegForm').addEventListener('submit', function(event) {
