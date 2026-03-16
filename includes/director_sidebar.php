@@ -8,6 +8,7 @@ $project_root = "/campusmanagementsystem/";
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
+
 <div class="sidebar-executive">
     <div class="brand">Direct<span>CMS</span></div>
     <div class="nav-group">
