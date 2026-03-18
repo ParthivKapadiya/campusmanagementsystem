@@ -1,4 +1,8 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+?>
+<?php
 // 1. Silent Configuration
 $pageTitle = "Register | CampusCMS";
 
@@ -34,18 +38,21 @@ if ($db_found && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['reg_btn']
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
     try {
-        $query = "INSERT INTO users (full_name, email, phone, gender, password, role) 
-                  VALUES (:name, :email, :phone, :gender, :pass, :role)";
+        $fullName = mysqli_real_escape_string($conn, $fullName);
+        $email    = mysqli_real_escape_string($conn, $email);
+        $phone    = mysqli_real_escape_string($conn, $phone);
+        $gender   = mysqli_real_escape_string($conn, $gender);
+        $hashed_password = mysqli_real_escape_string($conn, $hashed_password);
 
-        $stmt = $conn->prepare($query);
-        $stmt->execute([
-            ':name'   => $fullName,
-            ':email'  => $email,
-            ':phone'  => $phone,
-            ':gender' => $gender,
-            ':pass'   => $hashed_password,
-            ':role'   => 'student'
-        ]);
+        $query = "INSERT INTO users (full_name, email, phone, gender, password, role) 
+          VALUES ('$fullName', '$email', '$phone', '$gender', '$hashed_password', 'student')";
+
+        if (mysqli_query($conn, $query)) {
+            echo "<script>alert('Registration Successful!'); window.location='login.php';</script>";
+            exit();
+        } else {
+            echo "<script>alert('Error: " . mysqli_error($conn) . "');</script>";
+        }
 
         echo "<script>alert('Registration Successful!'); window.location='login.php';</script>";
         exit();
@@ -427,5 +434,8 @@ if ($db_found) {
     });
 </script>
 <?php
-include_once $root . 'includes/footer.php';
+if ($db_found) {
+    $footerPath = str_replace('db.php', 'footer.php', $path);
+    if (file_exists($footerPath)) include_once $footerPath;
+}
 ?>

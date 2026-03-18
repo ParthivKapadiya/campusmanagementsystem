@@ -20,34 +20,48 @@ foreach ($possible_paths as $p) {
     }
 }
 
-// 2. LOGIN PROCESSING
+// 2. LOGIN PROCESSING (MYSQLI)
 if ($db_found && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login_btn'])) {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
 
     if (!empty($email) && !empty($password)) {
-        try {
-            $stmt = $conn->prepare("SELECT * FROM users WHERE email = :email LIMIT 1");
-            $stmt->execute([':email' => $email]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($user && password_verify($password, $user['password'])) {
-                // Set Session Data
+        $email = mysqli_real_escape_string($conn, $email);
+        $query = "SELECT * FROM users WHERE email='$email' LIMIT 1";
+        $result = mysqli_query($conn, $query);
+
+        if ($result && mysqli_num_rows($result) == 1) {
+
+            $user = mysqli_fetch_assoc($result);
+
+            // plain password check
+            if (password_verify($password, $user['password'])) {
+
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_name'] = $user['full_name'];
                 $_SESSION['user_role'] = $user['role'];
 
-                // TYPO FIXED: Removed the '=' from the URL
                 echo "<script>
-                        alert('Welcome back, " . addslashes($user['full_name']) . "!'); 
-                        window.location.href='../student/dashboard.php';
-                      </script>";
+                        alert('Welcome back, " . addslashes($user['full_name']) . "!');
+                    </script>";
+
+                if ($user['role'] == 'admin') {
+                    echo "<script>window.location.href='../admin/dashboard.php';</script>";
+                } elseif ($user['role'] == 'hod') {
+                    echo "<script>window.location.href='../hod/dashboard.php';</script>";
+                } elseif ($user['role'] == 'director') {
+                    echo "<script>window.location.href='../director/dashboard.php';</script>";
+                } else {
+                    echo "<script>window.location.href='../student/dashboard.php';</script>";
+                }
+
                 exit();
             } else {
                 echo "<script>alert('Invalid Email or Password!');</script>";
             }
-        } catch (PDOException $e) {
-            // Error handled silently for clean UI
+        } else {
+            echo "<script>alert('Invalid Email or Password!');</script>";
         }
     }
 }
@@ -194,7 +208,7 @@ if ($db_found) {
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
-    // YOUR JQUERY LOGIC (UNTOUCHED)
+    // YOUR JQUERY LOGIC (UNCHANGED)
     $(document).ready(function() {
         function validateInput(input) {
             let field = $(input);
