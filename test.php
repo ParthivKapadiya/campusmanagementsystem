@@ -6,3 +6,9 @@ if ($conn) {
 } else {
     echo "Connection failed";
 }
+
+
+
+echo password_hash("admin12345", PASSWORD_DEFAULT) . "<br>";
+echo password_hash("hod12345", PASSWORD_DEFAULT) . "<br>";
+echo password_hash("director12345", PASSWORD_DEFAULT) . "<br>";
