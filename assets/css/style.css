@@ -816,3 +816,34 @@ body {
         font-size: 2rem;
     }
 }
+
+/* CTA SECTION IMPROVED */
+.cta-section {
+    background: linear-gradient(135deg, #0d6efd, #0f172a);
+    position: relative;
+    overflow: hidden;
+    color: white;
+}
+
+.cta-section h2 {
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.cta-section p {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.cta-section .btn-light-premium {
+    background: white;
+    color: #0d6efd;
+    border-radius: 50px;
+    padding: 12px 30px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.cta-section .btn-light-premium:hover {
+    background: #f1f5f9;
+    transform: translateY(-2px);
+}

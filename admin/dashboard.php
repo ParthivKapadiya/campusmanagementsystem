@@ -1,5 +1,9 @@
 <?php
 session_start();
+
+require_once '../includes/auth_guard.php';
+cms_role_required('admin');
+
 $pageTitle = "System Command | Admin Console";
 ?>
 <!DOCTYPE html>

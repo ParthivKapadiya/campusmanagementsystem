@@ -1,4 +1,7 @@
 <?php
+require_once '../includes/auth_guard.php';
+cms_role_required('hod');
+
 $pageTitle = "Performance Analytics | CampusCMS";
 ?>
 <!DOCTYPE html>

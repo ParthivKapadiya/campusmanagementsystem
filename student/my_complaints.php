@@ -1,5 +1,9 @@
 <?php
 session_start();
+
+require_once '../includes/auth_guard.php';
+cms_role_required('student');
+
 include '../includes/header.php';
 // In your real application, you'll fetch these from the database using:
 // $tickets = mysqli_query($conn, "SELECT * FROM complaints WHERE student_id = '$session_id'");

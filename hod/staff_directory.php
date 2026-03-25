@@ -1,4 +1,7 @@
 <?php
+require_once '../includes/auth_guard.php';
+cms_role_required('hod');
+
 $pageTitle = "Staff Directory | CampusCMS";
 $root = $_SERVER['DOCUMENT_ROOT'] . '/campusmanagementsystem/';
 // include_once $root . 'db_config.php'; // Uncomment when database is ready

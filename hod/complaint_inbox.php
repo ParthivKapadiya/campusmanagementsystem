@@ -1,4 +1,7 @@
 <?php
+require_once '../includes/auth_guard.php';
+cms_role_required('hod');
+
 $pageTitle = "Advanced Inbox | CampusCMS";
 $root = $_SERVER['DOCUMENT_ROOT'] . '/campusmanagementsystem/';
 ?>
@@ -243,20 +246,20 @@ $root = $_SERVER['DOCUMENT_ROOT'] . '/campusmanagementsystem/';
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form action="assign_task.php" method="POST">
                         <div class="mb-3">
                             <label class="form-label small fw-bold">STATUS</label>
-                            <select class="form-select border-0 bg-light p-3 rounded-4">
-                                <option>Mark as Under Review</option>
-                                <option>Mark as Resolved</option>
-                                <option>Forward to Director</option>
+                            <select name="status" class="form-select border-0 bg-light p-3 rounded-4">
+                                <option value="review">Mark as Under Review</option>
+                                <option value="resolved">Mark as Resolved</option>
+                                <option value="director">Forward to Director</option>
                             </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label small fw-bold">REMARKS (SRS 4.4)</label>
-                            <textarea class="form-control border-0 bg-light p-3 rounded-4" rows="3"></textarea>
+                            <textarea name="remarks" class="form-control border-0 bg-light p-3 rounded-4" rows="3"></textarea>
                         </div>
-                        <button type="button" class="btn btn-primary w-100 p-3 rounded-4 fw-bold" data-bs-dismiss="modal">Confirm Action</button>
+                        <button type="submit" class="btn btn-primary w-100 p-3 rounded-4 fw-bold" data-bs-dismiss="modal">Confirm Action</button>
                     </form>
                 </div>
             </div>

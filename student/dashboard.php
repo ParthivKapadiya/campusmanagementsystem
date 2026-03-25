@@ -1,5 +1,9 @@
 <?php
 session_start();
+
+require_once '../includes/auth_guard.php';
+cms_role_required('student');
+
 // Beginner Tip: This line checks if the user is logged in
 $studentName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : "Student";
 include '../includes/header.php';

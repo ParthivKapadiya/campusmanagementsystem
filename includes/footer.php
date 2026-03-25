@@ -28,7 +28,6 @@
                     <li><a href="about.php">About Us</a></li>
                     <li><a href="contact.php">Contact</a></li>
                     <li><a href="auth/login.php">Login</a></li>
-                    <li><a href="gatekeeper.php">Gatekeeper</a></li>
                 </ul>
             </div>
 

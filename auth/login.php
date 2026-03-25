@@ -2,6 +2,7 @@
 session_start();
 $pageTitle = "Login | CampusCMS";
 
+
 // 1. DATABASE & PATH LOGIC
 $possible_paths = [
     __DIR__ . '/includes/db.php',
@@ -26,42 +27,36 @@ if ($db_found && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login_btn
     $password = $_POST['password'] ?? '';
 
     if (!empty($email) && !empty($password)) {
-
+        // Sanitize input
         $email = mysqli_real_escape_string($conn, $email);
         $query = "SELECT * FROM users WHERE email='$email' LIMIT 1";
         $result = mysqli_query($conn, $query);
 
         if ($result && mysqli_num_rows($result) == 1) {
-
             $user = mysqli_fetch_assoc($result);
 
-            // plain password check
+            // Verify Hashed Password
             if (password_verify($password, $user['password'])) {
-
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_name'] = $user['full_name'];
                 $_SESSION['user_role'] = $user['role'];
 
-                echo "<script>
-                        alert('Welcome back, " . addslashes($user['full_name']) . "!');
-                    </script>";
-
+                // ROLE-BASED ROUTING (FIXED)
                 if ($user['role'] == 'admin') {
-                    echo "<script>window.location.href='../admin/dashboard.php';</script>";
+                    header("Location: ../admin/dashboard.php");
                 } elseif ($user['role'] == 'hod') {
-                    echo "<script>window.location.href='../hod/dashboard.php';</script>";
+                    header("Location: ../hod/dashboard.php");
                 } elseif ($user['role'] == 'director') {
-                    echo "<script>window.location.href='../director/dashboard.php';</script>";
+                    header("Location: ../director/dashboard.php");
                 } else {
-                    echo "<script>window.location.href='../student/dashboard.php';</script>";
+                    header("Location: ../student/dashboard.php");
                 }
-
                 exit();
             } else {
-                echo "<script>alert('Invalid Email or Password!');</script>";
+                $error = "Invalid Email or Password!";
             }
         } else {
-            echo "<script>alert('Invalid Email or Password!');</script>";
+            $error = "Invalid Email or Password!";
         }
     }
 }
@@ -76,7 +71,7 @@ if ($db_found) {
 ?>
 
 <style>
-    /* -------------------- YOUR CSS (UNTOUCHED) -------------------- */
+    /* -------------------- YOUR CSS (UNHARMED) -------------------- */
     .login-section {
         min-height: 100vh;
         display: flex;
@@ -179,6 +174,9 @@ if ($db_found) {
             <div class="login-form-area">
                 <h3 class="fw-bold mb-2">Login</h3>
                 <p class="text-muted mb-4">Enter your credentials to continue</p>
+                <?php if (!empty($error)) { ?>
+                    <div class="alert alert-danger"><?php echo $error; ?></div>
+                <?php } ?>
 
                 <form id="loginForm" action="login.php" method="POST" novalidate>
                     <div class="mb-4">
@@ -190,6 +188,11 @@ if ($db_found) {
                     <div class="mb-4">
                         <label class="form-label">Password</label>
                         <input type="password" name="password" class="form-control" placeholder="••••••••" data-validation="required min" data-min="6">
+
+                        <div class="text-end mt-2">
+                            <a href="forgot_password.php" class="text-primary small text-decoration-none fw-bold">Forgot Password?</a>
+                        </div>
+
                         <small id="password_error" class="error-msg" style="display:none;"></small>
                     </div>
 
@@ -208,7 +211,7 @@ if ($db_found) {
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
-    // YOUR JQUERY LOGIC (UNCHANGED)
+    // YOUR JQUERY LOGIC (UNHARMED)
     $(document).ready(function() {
         function validateInput(input) {
             let field = $(input);
@@ -257,8 +260,19 @@ if ($db_found) {
         });
     });
 </script>
+<script>
+    setTimeout(function() {
+        let alertBox = document.querySelector('.alert');
+        if (alertBox) {
+            alertBox.style.transition = "opacity 0.5s ease";
+            alertBox.style.opacity = "0";
+            setTimeout(() => alertBox.remove(), 500);
+        }
+    }, 3000); // disappears after 3 seconds
+</script>
 
 <?php
+echo password_hash("hod@123", PASSWORD_DEFAULT);
 if ($db_found) {
     $footerPath = str_replace('db.php', 'footer.php', $path);
     if (file_exists($footerPath)) include_once $footerPath;

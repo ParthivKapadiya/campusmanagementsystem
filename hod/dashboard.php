@@ -1,4 +1,7 @@
 <?php
+require_once '../includes/auth_guard.php';
+cms_role_required('hod');
+
 $pageTitle = "Department Analytics & Control | CampusCMS";
 $root = $_SERVER['DOCUMENT_ROOT'] . '/campusmanagementsystem/';
 ?>
@@ -291,10 +294,10 @@ $root = $_SERVER['DOCUMENT_ROOT'] . '/campusmanagementsystem/';
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <form>
+                    <form action="assign_task.php" method="POST">
                         <div class="mb-4">
                             <label class="form-label fw-bold small">UPDATE COMPLAINT STATUS (SRS 4.3)</label>
-                            <select class="form-select border-0 bg-light p-3 rounded-4 fw-bold">
+                            <select name="status" class="form-select border-0 bg-light p-3 rounded-4 fw-bold">
                                 <option value="review">Mark as Under Review</option>
                                 <option value="resolved">Mark as Resolved</option>
                                 <option value="director">Forward to Director</option>
@@ -302,9 +305,9 @@ $root = $_SERVER['DOCUMENT_ROOT'] . '/campusmanagementsystem/';
                         </div>
                         <div class="mb-4">
                             <label class="form-label fw-bold small">ADD REMARKS / COMMENTS (SRS 4.4)</label>
-                            <textarea class="form-control border-0 bg-light p-3 rounded-4" rows="4" placeholder="Enter instructions for staff or notes for the Director..."></textarea>
+                            <textarea name="remarks" class="form-control border-0 bg-light p-3 rounded-4" rows="4" placeholder="Enter instructions for staff or notes for the Director..."></textarea>
                         </div>
-                        <button type="button" class="btn btn-primary w-100 p-3 rounded-4 fw-bold shadow-sm" data-bs-dismiss="modal">Save Decision & Notify</button>
+                        <button type="submit" class="btn btn-primary w-100 p-3 rounded-4 fw-bold shadow-sm" data-bs-dismiss="modal">Save Decision & Notify</button>
                     </form>
                 </div>
             </div>

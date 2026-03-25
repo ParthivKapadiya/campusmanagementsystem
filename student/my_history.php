@@ -1,5 +1,9 @@
 <?php
 session_start();
+
+require_once '../includes/auth_guard.php';
+cms_role_required('student');
+
 include '../includes/header.php';
 // Mock data - replace with SQL: SELECT * FROM complaints WHERE student_id = ?
 ?>

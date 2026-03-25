@@ -1,4 +1,7 @@
 <?php
+require_once '../includes/auth_guard.php';
+cms_role_required('admin');
+
 $pageTitle = "Complaint Flow Monitor | Admin Console";
 ?>
 <!DOCTYPE html>
