@@ -7,7 +7,9 @@ require_once 'includes/db.php';
 // FETCH ALL DATA
 $hero = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM site_content WHERE page_name='index' AND section_name='hero'"));
 
-$features = mysqli_query($conn, "SELECT * FROM site_content WHERE section_name LIKE 'feature%'");
+$features = mysqli_query($conn, "SELECT * FROM site_content 
+WHERE page_name='index' AND section_name='feature' 
+ORDER BY order_no ASC");
 
 $workflow = mysqli_query($conn, "SELECT * FROM site_content WHERE section_name='workflow'");
 
@@ -61,28 +63,19 @@ $cta = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM site_content WHERE 
 </section>
 
 <!-- FEATURES -->
-<section class="features-section py-5">
-    <div class="container">
-        <h2 class="section-heading text-center">Core Platform Features</h2>
-
-        <div class="row mt-5 justify-content-center">
-            <?php
-            $icons = ['bi-ticket-perforated', 'bi-gear-wide-connected', 'bi-bar-chart-line'];
-            $i = 0;
-            while ($f = mysqli_fetch_assoc($features)) { ?>
-                <div class="col-md-4">
-                    <div class="feature-card-2">
-                        <div class="feature-icon">
-                            <i class="bi <?php echo $icons[$i++]; ?>"></i>
-                        </div>
-                        <h5><?php echo $f['title']; ?></h5>
-                        <p><?php echo $f['description']; ?></p>
-                    </div>
+<div class="row mt-5 justify-content-center">
+    <?php while ($f = mysqli_fetch_assoc($features)) { ?>
+        <div class="col-md-4">
+            <div class="feature-card-2">
+                <div class="feature-icon">
+                    <i class="bi <?php echo $f['image']; ?>"></i>
                 </div>
-            <?php } ?>
+                <h5><?php echo $f['title']; ?></h5>
+                <p><?php echo $f['description']; ?></p>
+            </div>
         </div>
-    </div>
-</section>
+    <?php } ?>
+</div>
 
 <!-- WORKFLOW -->
 <section class="workflow-section py-5">
